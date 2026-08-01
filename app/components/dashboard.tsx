@@ -336,6 +336,9 @@ return (
 
             {/* =========================
                 SCROLLABLE CONTENT
+                (scrolls on mobile only —
+                laptop/desktop stays static,
+                no scrollbar)
             ========================== */}
 
             <div
@@ -344,6 +347,7 @@ return (
                     min-h-0
                     flex-1
                     overflow-y-auto
+                    lg:overflow-y-visible
                     px-4
                     py-5
                 "

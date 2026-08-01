@@ -748,48 +748,56 @@ async function loadRecommendations() {
                                                         key={
                                                             song.trackId
                                                         }
-                                                        className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900 p-3 shadow-lg transition hover:border-slate-700 sm:gap-4 sm:p-4"
+                                                        className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-900 p-3 shadow-lg transition hover:border-slate-700 sm:flex-row sm:items-center sm:gap-4 sm:p-4"
                                                     >
 
-                                                        {/* ARTWORK */}
+                                                        {/* ARTWORK + DETAILS
+                                                            (always a row, even on mobile) */}
 
-                                                        <img
-                                                            src={
-                                                                song.artworkUrl100
-                                                            }
-                                                            alt={
-                                                                song.trackName
-                                                            }
-                                                            className="h-14 w-14 shrink-0 rounded-lg object-cover sm:h-16 sm:w-16"
-                                                        />
+                                                        <div className="flex items-center gap-3 sm:flex-1 sm:gap-4">
 
-                                                        {/* DETAILS */}
+                                                            {/* ARTWORK */}
 
-                                                        <div className="min-w-0 flex-1">
-
-                                                            <h3 className="truncate font-semibold text-white">
-                                                                {
+                                                            <img
+                                                                src={
+                                                                    song.artworkUrl100
+                                                                }
+                                                                alt={
                                                                     song.trackName
                                                                 }
-                                                            </h3>
+                                                                className="h-14 w-14 shrink-0 rounded-lg object-cover sm:h-16 sm:w-16"
+                                                            />
 
-                                                            <p className="truncate text-sm text-slate-400">
-                                                                {
-                                                                    song.artistName
-                                                                }
-                                                            </p>
+                                                            {/* DETAILS */}
 
-                                                            <p className="truncate text-xs text-slate-500">
-                                                                {
-                                                                    song.collectionName
-                                                                }
-                                                            </p>
+                                                            <div className="min-w-0 flex-1">
+
+                                                                <h3 className="truncate font-semibold text-white">
+                                                                    {
+                                                                        song.trackName
+                                                                    }
+                                                                </h3>
+
+                                                                <p className="truncate text-sm text-slate-400">
+                                                                    {
+                                                                        song.artistName
+                                                                    }
+                                                                </p>
+
+                                                                <p className="truncate text-xs text-slate-500">
+                                                                    {
+                                                                        song.collectionName
+                                                                    }
+                                                                </p>
+
+                                                            </div>
 
                                                         </div>
 
-                                                        {/* ACTIONS */}
+                                                        {/* ACTIONS
+                                                            (own row on mobile, right-aligned) */}
 
-                                                        <div className="flex shrink-0 gap-2">
+                                                        <div className="flex shrink-0 justify-end gap-2">
 
                                                             {song.previewUrl && (
                                                                 <button
