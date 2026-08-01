@@ -10,6 +10,7 @@ BarChart3,
 Sparkles,
 Settings,
 LogOut,
+LogIn,
 X,
 Music2,
 } from "lucide-react";
@@ -94,6 +95,15 @@ useEffect(() => {
 
 
 // =========================
+// AUTH STATE
+// =========================
+
+const isLoggedIn = Boolean(
+    user.username
+);
+
+
+// =========================
 // NAVIGATION
 // =========================
 
@@ -125,6 +135,26 @@ function handleLogout() {
     toast.success(
         "Logged out successfully"
     );
+
+    if (onClose) {
+        onClose();
+    }
+
+    router.push("/login");
+
+}
+
+
+// =========================
+// AUTH BUTTON HANDLER
+// =========================
+
+function handleAuthAction() {
+
+    if (isLoggedIn) {
+        handleLogout();
+        return;
+    }
 
     if (onClose) {
         onClose();
@@ -531,7 +561,7 @@ return (
 
 
             {/* =========================
-                LOGOUT
+                LOGIN / LOGOUT
             ========================== */}
 
             <div
@@ -546,8 +576,8 @@ return (
 
                 <button
                     type="button"
-                    onClick={handleLogout}
-                    className="
+                    onClick={handleAuthAction}
+                    className={`
                         flex
                         w-full
                         items-center
@@ -558,20 +588,26 @@ return (
 
                         text-sm
                         font-medium
-                        text-slate-400
 
                         transition-all
                         duration-200
 
-                        hover:bg-red-500/10
-                        hover:text-red-400
-                    "
+                        ${
+                            isLoggedIn
+                                ? "text-slate-400 hover:bg-red-500/10 hover:text-red-400"
+                                : "text-slate-400 hover:bg-emerald-500/10 hover:text-emerald-400"
+                        }
+                    `}
                 >
 
-                    <LogOut size={19} />
+                    {isLoggedIn ? (
+                        <LogOut size={19} />
+                    ) : (
+                        <LogIn size={19} />
+                    )}
 
                     <span>
-                        Logout
+                        {isLoggedIn ? "Logout" : "Login"}
                     </span>
 
                 </button>
