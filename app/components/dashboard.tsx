@@ -1,251 +1,299 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
-    User,
-    Library,
-    Search,
-    BarChart3,
-    Sparkles,
-    Settings,
-    LogOut,
-    X,
+User,
+Library,
+Search,
+BarChart3,
+Sparkles,
+Settings,
+LogOut,
+X,
+Music2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserData {
-    id?: number;
-    username?: string;
-    email?: string;
+id?: number;
+username?: string;
+email?: string;
 }
 
 interface DashboardProps {
-    mobileOpen?: boolean;
-    onClose?: () => void;
+mobileOpen?: boolean;
+onClose?: () => void;
 }
 
 export default function Dashboard({
-    mobileOpen = false,
-    onClose,
+mobileOpen = false,
+onClose,
 }: DashboardProps) {
 
-    const router = useRouter();
 
-    const [user, setUser] = useState<UserData>({});
+const router = useRouter();
+const pathname = usePathname();
 
-    // =========================
-    // LOAD USER
-    // =========================
+const [user, setUser] = useState<UserData>({});
 
-    useEffect(() => {
 
-        const loadUser = () => {
+// =========================
+// LOAD USER
+// =========================
 
-            const storedUser =
-                localStorage.getItem("user");
+useEffect(() => {
 
-            if (!storedUser) {
-                setUser({});
-                return;
-            }
+    const loadUser = () => {
 
-            try {
+        const storedUser =
+            localStorage.getItem("user");
 
-                const parsedUser =
-                    JSON.parse(storedUser);
+        if (!storedUser) {
+            setUser({});
+            return;
+        }
 
-                setUser(parsedUser);
+        try {
 
-            } catch (error) {
+            const parsedUser =
+                JSON.parse(storedUser);
 
-                console.error(
-                    "Failed to parse user data:",
-                    error
-                );
+            setUser(parsedUser);
 
-                setUser({});
+        } catch (error) {
 
-            }
+            console.error(
+                "Failed to parse user data:",
+                error
+            );
 
-        };
+            setUser({});
 
-        loadUser();
+        }
 
-        window.addEventListener(
+    };
+
+    loadUser();
+
+    window.addEventListener(
+        "userUpdated",
+        loadUser
+    );
+
+    return () => {
+
+        window.removeEventListener(
             "userUpdated",
             loadUser
         );
 
-        return () => {
+    };
 
-            window.removeEventListener(
-                "userUpdated",
-                loadUser
-            );
-
-        };
-
-    }, []);
+}, []);
 
 
-    // =========================
-    // NAVIGATION
-    // =========================
+// =========================
+// NAVIGATION
+// =========================
 
-    function navigate(path: string) {
+function navigate(path: string) {
 
-        router.push(path);
+    router.push(path);
 
-        if (onClose) {
-            onClose();
-        }
-
+    if (onClose) {
+        onClose();
     }
 
+}
 
-    // =========================
-    // LOGOUT
-    // =========================
 
-    function handleLogout() {
+// =========================
+// LOGOUT
+// =========================
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("username");
-        localStorage.removeItem("email");
+function handleLogout() {
 
-        document.cookie =
-            "token=; path=/; max-age=0";
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
 
-        toast.success(
-            "Logged out successfully"
-        );
+    document.cookie =
+        "token=; path=/; max-age=0";
 
-        if (onClose) {
-            onClose();
-        }
+    toast.success(
+        "Logged out successfully"
+    );
 
-        router.push("/login");
-
+    if (onClose) {
+        onClose();
     }
 
+    router.push("/login");
 
-    return (
-        <>
-            {/* =========================
-                MOBILE OVERLAY
-            ========================== */}
-
-            {mobileOpen && (
-                <div
-                    onClick={onClose}
-                    className="
-                        fixed
-                        inset-0
-                        z-40
-                        bg-black/60
-                        lg:hidden
-                    "
-                />
-            )}
+}
 
 
-            {/* =========================
-                SIDEBAR
-            ========================== */}
+// =========================
+// NAVIGATION ITEMS
+// =========================
 
-            <aside
-                className={`
+const navigationItems = [
+    {
+        name: "Search",
+        path: "/",
+        icon: Search,
+    },
+    {
+        name: "My Library",
+        path: "/library",
+        icon: Library,
+    },
+    {
+        name: "Analytics",
+        path: "/analytics",
+        icon: BarChart3,
+    },
+    {
+        name: "AI Insights",
+        path: "/ai",
+        icon: Sparkles,
+    },
+    {
+        name: "Profile",
+        path: "/profile",
+        icon: User,
+    },
+    {
+        name: "Settings",
+        path: "/settings",
+        icon: Settings,
+    },
+];
+
+
+return (
+    <>
+
+        {/* =========================
+            MOBILE OVERLAY
+        ========================== */}
+
+        {mobileOpen && (
+            <div
+                onClick={onClose}
+                className="
                     fixed
-                    left-0
-                    top-0
-                    z-50
+                    inset-0
+                    z-40
+                    bg-black/60
+                    backdrop-blur-sm
+                    lg:hidden
+                "
+            />
+        )}
 
+
+        {/* =========================
+            SIDEBAR
+        ========================== */}
+
+        <aside
+            className={`
+                fixed
+                inset-y-0
+                left-0
+                z-50
+
+                flex
+                w-[280px]
+                flex-col
+
+                border-r
+                border-slate-800
+
+                bg-slate-950
+
+                shadow-2xl
+
+                transition-transform
+                duration-300
+                ease-in-out
+
+                ${
+                    mobileOpen
+                        ? "translate-x-0"
+                        : "-translate-x-full"
+                }
+
+                lg:static
+                lg:h-screen
+                lg:translate-x-0
+                lg:shadow-none
+                lg:shrink-0
+            `}
+        >
+
+
+            {/* =========================
+                BRAND HEADER
+            ========================== */}
+
+            <div
+                className="
                     flex
-                    h-screen
-                    w-72
-                    flex-col
-
-                    bg-slate-900
-                    border-r
+                    shrink-0
+                    items-center
+                    justify-between
+                    border-b
                     border-slate-800
-                    shadow-2xl
-
-                    transition-transform
-                    duration-300
-                    ease-in-out
-
-                    ${
-                        mobileOpen
-                            ? "translate-x-0"
-                            : "-translate-x-full"
-                    }
-
-                    lg:static
-                    lg:translate-x-0
-                    lg:shadow-none
-                    lg:shrink-0
-                `}
+                    px-5
+                    py-5
+                "
             >
-
-                {/* =========================
-                    MOBILE CLOSE BUTTON
-                ========================== */}
-
-                <button
-                    onClick={onClose}
-                    className="
-                        absolute
-                        right-4
-                        top-4
-                        z-10
-
-                        rounded-lg
-                        p-2
-
-                        text-slate-400
-
-                        transition
-
-                        hover:bg-slate-800
-                        hover:text-white
-
-                        lg:hidden
-                    "
-                >
-                    <X size={22} />
-                </button>
-
-
-                {/* =========================
-                    SIDEBAR MAIN CONTENT
-                ========================== */}
 
                 <div
                     className="
                         flex
-                        min-h-0
-                        flex-1
-                        flex-col
-
-                        overflow-y-auto
-
-                        p-6
+                        items-center
+                        gap-3
                     "
                 >
 
-                    {/* =========================
-                        WEBSITE NAME
-                    ========================== */}
+                    {/* LOGO */}
 
-                    <div className="mb-6">
+                    <div
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-emerald-500
+                            shadow-lg
+                            shadow-emerald-500/20
+                        "
+                    >
+                        <Music2
+                            size={22}
+                            className="text-white"
+                        />
+                    </div>
+
+
+                    {/* BRAND NAME */}
+
+                    <div>
 
                         <h1
                             className="
-                                text-2xl
+                                text-lg
                                 font-bold
-                                text-emerald-400
+                                tracking-tight
+                                text-white
                             "
                         >
                             TuneInsights
@@ -253,323 +301,283 @@ export default function Dashboard({
 
                         <p
                             className="
-                                text-sm
-                                text-slate-400
+                                text-xs
+                                text-slate-500
                             "
                         >
-                            Understand your music
+                            Your music, understood
                         </p>
 
                     </div>
 
+                </div>
 
-                    {/* =========================
-                        USER CARD
-                    ========================== */}
+
+                {/* MOBILE CLOSE */}
+
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="
+                        rounded-lg
+                        p-2
+                        text-slate-400
+                        transition
+                        hover:bg-slate-800
+                        hover:text-white
+                        lg:hidden
+                    "
+                >
+                    <X size={20} />
+                </button>
+
+            </div>
+
+
+            {/* =========================
+                SCROLLABLE CONTENT
+            ========================== */}
+
+            <div
+                className="
+                    sidebar-scroll
+                    min-h-0
+                    flex-1
+                    overflow-y-auto
+                    px-4
+                    py-5
+                "
+            >
+
+
+                {/* =========================
+                    USER CARD
+                ========================== */}
+
+                <div
+                    className="
+                        mb-6
+                        rounded-xl
+                        border
+                        border-slate-800
+                        bg-slate-900
+                        p-4
+                    "
+                >
 
                     <div
                         className="
-                            mb-6
-                            rounded-xl
-                            border
-                            border-slate-800
-                            bg-slate-800
-                            p-4
+                            flex
+                            items-center
+                            gap-3
                         "
                     >
+
+                        {/* AVATAR */}
 
                         <div
                             className="
                                 flex
+                                h-11
+                                w-11
+                                shrink-0
                                 items-center
-                                gap-3
+                                justify-center
+                                rounded-full
+                                bg-emerald-500
+                                text-base
+                                font-bold
+                                text-white
                             "
                         >
+                            {user.username
+                                ? user.username
+                                    .charAt(0)
+                                    .toUpperCase()
+                                : "G"}
+                        </div>
 
-                            {/* AVATAR */}
 
-                            <div
+                        {/* USER INFO */}
+
+                        <div className="min-w-0">
+
+                            <p
                                 className="
-                                    flex
-                                    h-12
-                                    w-12
-                                    shrink-0
-                                    items-center
-                                    justify-center
+                                    mb-1
+                                    text-xs
+                                    font-medium
+                                    uppercase
+                                    tracking-wider
+                                    text-slate-500
+                                "
+                            >
+                                Welcome back
+                            </p>
 
-                                    rounded-full
-
-                                    bg-emerald-500
-
-                                    text-lg
-                                    font-bold
+                            <h2
+                                className="
+                                    truncate
+                                    text-sm
+                                    font-semibold
                                     text-white
                                 "
                             >
-
-                                {user.username
-                                    ? user.username
-                                        .charAt(0)
-                                        .toUpperCase()
-                                    : "G"}
-
-                            </div>
-
-
-                            {/* USERNAME */}
-
-                            <div className="min-w-0">
-
-                                <h2
-                                    className="
-                                        truncate
-                                        font-semibold
-                                        text-white
-                                    "
-                                >
-                                    {user.username ||
-                                        "Guest"}
-                                </h2>
-
-                            </div>
+                                {user.username ||
+                                    "Guest"}
+                            </h2>
 
                         </div>
 
                     </div>
 
-
-                    {/* =========================
-                        NAVIGATION
-                    ========================== */}
-
-                    <nav
-                        className="
-                            flex
-                            flex-col
-                            gap-2
-                        "
-                    >
-
-                        {/* SEARCH */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <Search size={20} />
-                            Search
-                        </button>
-
-
-                        {/* LIBRARY */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/library")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <Library size={20} />
-                            My Library
-                        </button>
-
-
-                        {/* ANALYTICS */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/analytics")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <BarChart3 size={20} />
-                            Analytics
-                        </button>
-
-
-                        {/* AI INSIGHTS */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/ai")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <Sparkles size={20} />
-                            AI Insights
-                        </button>
-
-
-                        {/* PROFILE */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/profile")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <User size={20} />
-                            Profile
-                        </button>
-
-
-                        {/* SETTINGS */}
-
-                        <button
-                            onClick={() =>
-                                navigate("/settings")
-                            }
-                            className="
-                                flex
-                                w-full
-                                items-center
-                                gap-3
-                                rounded-lg
-                                p-3
-
-                                text-left
-                                text-slate-300
-
-                                transition
-
-                                hover:bg-slate-800
-                                hover:text-emerald-400
-                            "
-                        >
-                            <Settings size={20} />
-                            Settings
-                        </button>
-
-                    </nav>
-
                 </div>
 
 
                 {/* =========================
-                    LOGOUT
+                    NAVIGATION LABEL
                 ========================== */}
 
-                <div
+                <p
                     className="
-                        shrink-0
-                        border-t
-                        border-slate-800
-                        bg-slate-900
-                        p-6
+                        mb-3
+                        px-3
+                        text-xs
+                        font-semibold
+                        uppercase
+                        tracking-wider
+                        text-slate-500
+                    "
+                >
+                    Menu
+                </p>
+
+
+                {/* =========================
+                    NAVIGATION
+                ========================== */}
+
+                <nav
+                    className="
+                        flex
+                        flex-col
+                        gap-1
                     "
                 >
 
-                    <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="
-                            flex
-                            w-full
-                            items-center
-                            gap-3
+                    {navigationItems.map((item) => {
 
-                            rounded-lg
+                        const Icon = item.icon;
 
-                            p-3
+                        const isActive =
+                            pathname === item.path;
 
-                            font-medium
-                            text-white
+                        return (
+                            <button
+                                key={item.path}
+                                type="button"
+                                onClick={() =>
+                                    navigate(item.path)
+                                }
+                                className={`
+                                    flex
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3
+                                    py-3
 
-                            transition
+                                    text-left
+                                    text-sm
+                                    font-medium
 
-                            hover:bg-red-700
-                        "
-                    >
+                                    transition-all
+                                    duration-200
 
-                        <LogOut size={20} />
+                                    ${
+                                        isActive
+                                            ? "bg-emerald-500/10 text-emerald-400"
+                                            : "text-slate-400 hover:bg-slate-900 hover:text-white"
+                                    }
+                                `}
+                            >
 
-                        <span>
-                            Logout
-                        </span>
+                                <Icon
+                                    size={19}
+                                    className={
+                                        isActive
+                                            ? "text-emerald-400"
+                                            : "text-slate-500"
+                                    }
+                                />
 
-                    </button>
+                                <span>
+                                    {item.name}
+                                </span>
 
-                </div>
+                            </button>
+                        );
 
-            </aside>
-        </>
-    );
+                    })}
+
+                </nav>
+
+            </div>
+
+
+            {/* =========================
+                LOGOUT
+            ========================== */}
+
+            <div
+                className="
+                    shrink-0
+                    border-t
+                    border-slate-800
+                    bg-slate-950
+                    p-4
+                "
+            >
+
+                <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="
+                        flex
+                        w-full
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3
+                        py-3
+
+                        text-sm
+                        font-medium
+                        text-slate-400
+
+                        transition-all
+                        duration-200
+
+                        hover:bg-red-500/10
+                        hover:text-red-400
+                    "
+                >
+
+                    <LogOut size={19} />
+
+                    <span>
+                        Logout
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+    </>
+);
+
+
 }
-

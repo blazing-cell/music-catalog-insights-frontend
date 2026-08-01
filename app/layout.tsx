@@ -1,44 +1,57 @@
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+variable: "--font-geist-sans",
+subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+variable: "--font-geist-mono",
+subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-    title: "TuneInsights",
-    description:
-        "Discover your music. Track your library. Understand your listening.",
+title: {
+default: "TuneInsights",
+template: "%s | TuneInsights",
+},
+description:
+"Discover your music. Track your library. Understand your listening.",
+applicationName: "TuneInsights",
+keywords: [
+"music",
+"music library",
+"music analytics",
+"music insights",
+"AI music recommendations",
+"TuneInsights",
+],
 };
 
 export default function RootLayout({
-    children,
+children,
 }: Readonly<{
-    children: React.ReactNode;
+children: React.ReactNode;
 }>) {
-    return (
-        <html
-            lang="en"
-            className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-        >
-            <body className="min-h-full flex flex-col">
-                {children}
+return (
+<html
+lang="en"
+className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+> <body className="min-h-screen bg-slate-950 font-sans text-slate-100">
+{children}
 
-                <Toaster
-                    position="top-center"
-                    richColors
-                />
-            </body>
-        </html>
-    );
+
+            <Toaster
+                position="top-center"
+                richColors
+                closeButton
+            />
+        </body>
+    </html>
+);
+
+
 }
-
