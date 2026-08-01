@@ -30,11 +30,10 @@ mobileOpen = false,
 onClose,
 }: DashboardProps) {
 
+
 const router = useRouter();
 
-const [user, setUser] =
-    useState<UserData>({});
-
+const [user, setUser] = useState<UserData>({});
 
 // =========================
 // LOAD USER
@@ -44,21 +43,16 @@ useEffect(() => {
 
     const loadUser = () => {
 
-        const storedUser =
-            localStorage.getItem("user");
+        const storedUser = localStorage.getItem("user");
 
         if (!storedUser) {
-
             setUser({});
-
             return;
-
         }
 
         try {
 
-            const parsedUser =
-                JSON.parse(storedUser);
+            const parsedUser = JSON.parse(storedUser);
 
             setUser(parsedUser);
 
@@ -75,15 +69,12 @@ useEffect(() => {
 
     };
 
-
     loadUser();
-
 
     window.addEventListener(
         "userUpdated",
         loadUser
     );
-
 
     return () => {
 
@@ -95,7 +86,6 @@ useEffect(() => {
     };
 
 }, []);
-
 
 // =========================
 // NAVIGATION
@@ -111,7 +101,6 @@ function navigate(path: string) {
 
 }
 
-
 // =========================
 // LOGOUT
 // =========================
@@ -119,32 +108,24 @@ function navigate(path: string) {
 function handleLogout() {
 
     localStorage.removeItem("token");
-
     localStorage.removeItem("user");
-
     localStorage.removeItem("username");
-
     localStorage.removeItem("email");
-
 
     document.cookie =
         "token=; path=/; max-age=0";
-
 
     toast.success(
         "Logged out successfully"
     );
 
-
     if (onClose) {
         onClose();
     }
 
-
     router.push("/login");
 
 }
-
 
 return (
     <>
@@ -163,7 +144,6 @@ return (
             />
         )}
 
-
         {/* =========================
             DASHBOARD
         ========================== */}
@@ -174,7 +154,7 @@ return (
                 flex h-screen w-72
                 flex-col
                 border-r border-slate-800
-                bg-slate-900 p-6
+                bg-slate-900
                 shadow-2xl
 
                 transition-transform
@@ -215,288 +195,296 @@ return (
 
 
             {/* =========================
-                LOGO
-            ========================== */}
-
-            <div className="mb-6">
-
-                <h1 className="
-                    text-2xl
-                    font-bold
-                    text-emerald-400
-                ">
-                    Music Library
-                </h1>
-
-                <p className="
-                    text-sm
-                    text-slate-400
-                ">
-                    Personal Dashboard
-                </p>
-
-            </div>
-
-
-            {/* =========================
-                USER
+                SCROLLABLE SIDEBAR CONTENT
             ========================== */}
 
             <div className="
-                mb-8
-                rounded-xl
-                border
-                border-slate-800
-                bg-slate-800
-                p-4
+                flex
+                min-h-0
+                flex-1
+                flex-col
+                overflow-y-auto
+                p-6
             ">
 
-                <div className="
-                    flex
-                    items-center
-                    gap-3
-                ">
+                {/* =========================
+                    LOGO
+                ========================== */}
 
-                    {/* AVATAR */}
+                <div className="mb-6">
+
+                    <h1 className="
+                        text-2xl
+                        font-bold
+                        text-emerald-400
+                    ">
+                        Music Library
+                    </h1>
+
+                    <p className="
+                        text-sm
+                        text-slate-400
+                    ">
+                        Personal Dashboard
+                    </p>
+
+                </div>
+
+
+                {/* =========================
+                    USER
+                ========================== */}
+
+                <div className="
+                    mb-8
+                    rounded-xl
+                    border
+                    border-slate-800
+                    bg-slate-800
+                    p-4
+                ">
 
                     <div className="
                         flex
-                        h-12
-                        w-12
-                        shrink-0
                         items-center
-                        justify-center
-                        rounded-full
-                        bg-emerald-500
-                        text-lg
-                        font-bold
-                        text-white
+                        gap-3
                     ">
 
-                        {user.username
-                            ? user.username
-                                .charAt(0)
-                                .toUpperCase()
-                            : "G"}
+                        {/* AVATAR */}
 
-                    </div>
-
-
-                    {/* USERNAME */}
-
-                    <div className="min-w-0">
-
-                        <h2 className="
-                            truncate
-                            font-semibold
+                        <div className="
+                            flex
+                            h-12
+                            w-12
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            bg-emerald-500
+                            text-lg
+                            font-bold
                             text-white
                         ">
 
-                            {user.username ||
-                                "Guest"}
+                            {user.username
+                                ? user.username
+                                    .charAt(0)
+                                    .toUpperCase()
+                                : "G"}
 
-                        </h2>
+                        </div>
+
+
+                        {/* USERNAME */}
+
+                        <div className="min-w-0">
+
+                            <h2 className="
+                                truncate
+                                font-semibold
+                                text-white
+                            ">
+
+                                {user.username ||
+                                    "Guest"}
+
+                            </h2>
+
+                        </div>
 
                     </div>
 
                 </div>
 
+
+                {/* =========================
+                    NAVIGATION
+                ========================== */}
+
+                <nav className="
+                    flex
+                    flex-1
+                    flex-col
+                    gap-2
+                ">
+
+                    {/* SEARCH */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <Search size={20} />
+                        Search
+                    </button>
+
+
+                    {/* LIBRARY */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/library")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <Library size={20} />
+                        My Library
+                    </button>
+
+
+                    {/* ANALYTICS */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/analytics")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <BarChart3 size={20} />
+                        Analytics
+                    </button>
+
+
+                    {/* AI INSIGHTS */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/ai")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <Sparkles size={20} />
+                        AI Insights
+                    </button>
+
+
+                    {/* PROFILE */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/profile")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <User size={20} />
+                        Profile
+                    </button>
+
+
+                    {/* SETTINGS */}
+
+                    <button
+                        onClick={() =>
+                            navigate("/settings")
+                        }
+                        className="
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            p-3
+                            text-slate-300
+                            transition
+                            hover:bg-slate-800
+                            hover:text-emerald-400
+                        "
+                    >
+                        <Settings size={20} />
+                        Settings
+                    </button>
+
+                </nav>
+
             </div>
-
-
-            {/* =========================
-                NAVIGATION
-            ========================== */}
-
-            <nav className="
-                flex
-                flex-1
-                flex-col
-                gap-2
-            ">
-
-                {/* SEARCH */}
-
-                <button
-                    onClick={() =>
-                        navigate("/")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <Search size={20} />
-
-                    Search
-
-                </button>
-
-
-                {/* LIBRARY */}
-
-                <button
-                    onClick={() =>
-                        navigate("/library")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <Library size={20} />
-
-                    My Library
-
-                </button>
-
-
-                {/* ANALYTICS */}
-
-                <button
-                    onClick={() =>
-                        navigate("/analytics")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <BarChart3 size={20} />
-
-                    Analytics
-
-                </button>
-
-
-                {/* AI INSIGHTS */}
-
-                <button
-                    onClick={() =>
-                        navigate("/ai")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <Sparkles size={20} />
-
-                    AI Insights
-
-                </button>
-
-
-                {/* PROFILE */}
-
-                <button
-                    onClick={() =>
-                        navigate("/profile")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <User size={20} />
-
-                    Profile
-
-                </button>
-
-
-                {/* SETTINGS */}
-
-                <button
-                    onClick={() =>
-                        navigate("/settings")
-                    }
-                    className="
-                        flex
-                        items-center
-                        gap-3
-                        rounded-lg
-                        p-3
-                        text-slate-300
-                        transition
-                        hover:bg-slate-800
-                        hover:text-emerald-400
-                    "
-                >
-
-                    <Settings size={20} />
-
-                    Settings
-
-                </button>
-
-            </nav>
 
 
             {/* =========================
                 LOGOUT
             ========================== */}
 
-            <button
-                onClick={handleLogout}
-                className="
-                    flex
-                    items-center
-                    gap-3
-                    rounded-lg
-                    p-3
-                    font-medium
-                    text-white
-                    transition
-                    hover:bg-red-700
-                "
-            >
+            <div className="
+                shrink-0
+                border-t
+                border-slate-800
+                bg-slate-900
+                p-6
+            ">
 
-                <LogOut size={20} />
+                <button
+                    onClick={handleLogout}
+                    className="
+                        flex
+                        w-full
+                        items-center
+                        gap-3
+                        rounded-lg
+                        p-3
+                        font-medium
+                        text-white
+                        transition
+                        hover:bg-red-700
+                    "
+                >
 
-                Logout
+                    <LogOut size={20} />
 
-            </button>
+                    Logout
+
+                </button>
+
+            </div>
 
         </aside>
     </>
